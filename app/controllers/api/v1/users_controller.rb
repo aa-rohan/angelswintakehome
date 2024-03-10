@@ -9,8 +9,8 @@ class Api::V1::UsersController < ApplicationController
   end
 
   def signin
-    user = User.find_by_email(params[:email])
-    if user&.authenticate(params[:password])
+    user = User.find_by_email(params[:auth][:email])
+    if user&.authenticate(params[:auth][:password])
       token = JsonWebToken.encode(user_id: user.id)
       render json: { token: token }, status: :ok
     else
