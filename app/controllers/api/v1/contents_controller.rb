@@ -4,13 +4,13 @@ class Api::V1::ContentsController < ApplicationController
   before_action :authorize_user!, only: %i[update destroy]
 
   def index
-    render json: Content.all
+    render json: Content.all.map(&method(:serialized_content))
   end
 
   def create
     @content = current_user.contents.build(content_params)
     if @content.save
-      render json: @content, status: :created
+      render json: serialized_content(@content), status: :created
     else
       render json: { error: 'Could not create content' }, status: :unprocessable_entity
     end
@@ -18,7 +18,7 @@ class Api::V1::ContentsController < ApplicationController
 
   def update
     if @content.update(content_params)
-      render json: @content
+      render json: serialized_content(@content)
     else
       render json: { error: 'Could not update content' }, status: :unprocessable_entity
     end
@@ -37,6 +37,14 @@ class Api::V1::ContentsController < ApplicationController
 
   def content_params
     params.permit(:title, :body)
+  end
+
+  def serialized_content(content)
+    {
+      id: content.id,
+      type: 'contents',
+      attributes: Api::V1::ContentSerializer.new(content)
+    }
   end
 
   def authorize_user!
