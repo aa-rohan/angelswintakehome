@@ -2,7 +2,7 @@ class Api::V1::UsersController < ApplicationController
   def signup
     user = User.new(user_params)
     if user.save
-      render json: user, status: :created
+      head :no_content
     else
       render json: { error: 'There was an issue signing up' }, status: :unprocessable_entity
     end

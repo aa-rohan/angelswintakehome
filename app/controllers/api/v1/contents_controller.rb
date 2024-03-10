@@ -26,7 +26,7 @@ class Api::V1::ContentsController < ApplicationController
 
   def destroy
     @content.destroy
-    head :no_content
+    render json: { message: 'Deleted' }
   end
 
   private
